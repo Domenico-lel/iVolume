@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleExecutable</key><string>iVolume</string>
+<key>CFBundleName</key><string>iVolume</string>
+<key>CFBundleDisplayName</key><string>iVolume</string>
+<key>CFBundleIdentifier</key><string>it.domenicolella.ivolume</string>
+<key>CFBundlePackageType</key><string>APPL</string>
+<key>CFBundleShortVersionString</key><string>0.10.0</string>
+<key>CFBundleVersion</key><string>12</string>
+<key>CFBundleIconFile</key><string>AppIcon</string>
+<key>LSMinimumSystemVersion</key><string>14.2</string>
+<key>NSPrincipalClass</key><string>NSApplication</string>
+<key>NSAudioCaptureUsageDescription</key><string>iVolume elabora l’audio sul Mac per regolare il volume della TV HDMI e delle applicazioni. L’audio non viene registrato né inviato in rete.</string>
+<key>NSHumanReadableCopyright</key><string>© 2026 Domenico Lella</string>
+</dict></plist>

@@ -1,43 +1,76 @@
 # iVolume
 
-**Volume separato per le applicazioni su macOS.**
+**Controlla il volume del Mac, anche con cuffie collegate a una TV HDMI.**
 
-Un’applicazione di **Domenico Lella** per regolare separatamente il volume delle applicazioni sul Mac.
+Un’applicazione di **Domenico Lella** per macOS, con finestra nativa e icona nella barra dei menu.
 
 ## Scarica e installa
 
-**[Scarica iVolume.app.zip](https://github.com/Domenico-lel/iVolume/releases/latest/download/iVolume.app.zip)** dalla [release ufficiale](https://github.com/Domenico-lel/iVolume/releases/latest).
+[**Scarica iVolume 0.10.0 per Mac Intel**](https://github.com/Domenico-lel/iVolume/raw/refs/heads/main/iVolume-0.10.0-Intel.zip).
 
-1. Estrai il file ZIP.
-2. Trascina **iVolume.app** nella cartella **Applicazioni**.
-3. Apri l’app. Consenti l’accesso all’audio di sistema quando macOS lo richiede: serve per regolare il volume delle applicazioni.
+1. Estrai il file ZIP e sposta **iVolume.app** in Applicazioni.
+2. Apri l’app e seleziona l’uscita audio desiderata.
+3. Premi **Attiva controllo audio** e consenti l’accesso al solo audio di sistema.
+4. Per usare i tasti volume e muto, abilita iVolume in **Impostazioni di Sistema → Privacy e sicurezza → Accessibilità**.
+5. Avvia una riproduzione: il controllo si attiva quando riceve audio.
 
-Per installare e gestire gli aggiornamenti puoi usare anche **[iDom Launcher](https://github.com/Domenico-lel/iDom-Hub/releases/latest)**. I collegamenti **Source code** aggiunti da GitHub non sono installer.
+Il pacchetto è firmato localmente con un certificato Apple Development, ma **non è notarizzato per la distribuzione pubblica**: macOS può richiedere l’autorizzazione all’apertura. Non contiene certificati privati o chiavi di firma.
 
-## Versione e compatibilità
+Il download qui sopra punta al pacchetto aggiornato nel repository. Le precedenti release e i collegamenti di aggiornamento del launcher non sono stati sostituiti.
 
-| Voce | Pacchetto attualmente distribuito |
-| --- | --- |
-| Versione | **0.9.0** (build 10) |
-| Sistema | **macOS 14.2 o successivo** |
-| Processore | **Intel, x86_64** |
-| Mac Apple Silicon | Richiede **Rosetta** per eseguire il pacchetto Intel |
-| Windows | Non disponibile |
+## Novità della versione 0.10.0 · build 12
 
-Rosetta è la tecnologia Apple che permette ai Mac con chip Apple Silicon, come M1 e successivi, di eseguire applicazioni compilate per Intel. Se necessario, macOS propone di installarla quando apri l’app. [Spiegazione ufficiale Apple](https://support.apple.com/102527).
+- Finestra apribile avviando l’app e da **Apri iVolume** nel menu dell’icona.
+- Volume generale software per uscite HDMI, mantenendo le cuffie collegate alla presa AUX del televisore.
+- Supporto ai tasti volume e muto del Mac, con indicatore a schermo.
+- Volume separato delle applicazioni e memorizzazione dei livelli.
+- Ripresa del controllo alla riapertura dell’app, se era stato attivato.
+- Correzione del crash causato dall’aggiornamento ricorsivo del valore del volume.
 
-Questi dati sono stati verificati nel bundle distribuito (`Info.plist` e architettura dell’eseguibile). Il pacchetto attuale **non è universale**. Il tag della release si chiama `iVolume`; il numero reale dell’app è **0.9.0**.
+Chiudere la finestra lascia attiva l’app. **Disattiva** oppure **Esci da iVolume** ripristinano il normale percorso audio: il livello torna a essere gestito dalla TV. Il cursore volume HDMI integrato di macOS può restare disabilitato; si usano i tasti intercettati da iVolume o il cursore della sua finestra.
 
-## Aggiornamenti
+Il 100% corrisponde al segnale originale, senza amplificazione. L’audio viene elaborato in memoria e non viene salvato o inviato in rete.
 
-In iDom Launcher, quando esce una nuova release compatibile compare **Aggiorna**. Chiudi iVolume prima di aggiornarlo. Per collegare una copia già installata alla release iniziale, che usa un tag senza numero, usa **Collega al launcher** nei dettagli dell’app.
+## Compatibilità
 
-Per le prossime pubblicazioni usa tag numerici, per esempio `v0.9.1`, allineati a `CFBundleShortVersionString`, e allega `iVolume.app.zip` o `iVolume.dmg`. La pubblicazione di un README non cambia la versione del pacchetto già distribuito.
+- macOS **14.2 o successivo**.
+- Pacchetto incluso: **Intel x86_64**, verificato su macOS 15.8.1 con uscita HDMI stereo a 48 kHz.
+- Motore per flussi **PCM stereo Float32**; audio multicanale non supportato.
+- Su Apple Silicon è possibile compilare dai sorgenti per arm64. Il pacchetto Intel richiede Rosetta e non è stato verificato su Apple Silicon.
+- I cambi di uscita o composizione del mixer possono causare una breve interruzione audio.
 
-## Contenuto del repository
+## Sorgenti e compilazione
 
-Questo repository distribuisce il pacchetto compilato. Attualmente contiene `iVolume-0.9.0-Intel.zip`; per l’installazione consigliamo il file **iVolume.app.zip** nella sezione Releases. Il codice sorgente e le istruzioni di compilazione non sono presenti.
+Il repository ora include il sorgente della versione 0.10.0, ricostruita perché della precedente 0.9.0 era disponibile solo il pacchetto compilato. Il vecchio ZIP resta disponibile per il ripristino.
 
-## Segnalazioni
+Servono Xcode e il relativo SDK macOS:
 
-Per segnalare un problema usa [Issues](https://github.com/Domenico-lel/iVolume/issues), indicando versione di macOS, modello del Mac e passaggi per riprodurlo.
+```sh
+bash build.sh
+```
+
+Lo script genera `dist/iVolume.app` per l’architettura del Mac. Per usare un certificato di firma stabile:
+
+```sh
+CODE_SIGN_IDENTITY="Nome del proprio certificato" bash build.sh
+```
+
+In assenza della variabile viene usata una firma ad hoc; ricompilare può richiedere di concedere nuovamente i permessi di macOS.
+
+Il rendering audio è implementato in C, senza allocazioni o lock nel callback; finestra e gestione del percorso audio sono in Swift, AppKit e SwiftUI. Vengono usate le API pubbliche [Core Audio taps di Apple](https://developer.apple.com/documentation/coreaudio/capturing-system-audio-with-core-audio-taps).
+
+## Verifiche
+
+Verificati sul Mac di sviluppo: riproduzione reale, attenuazione misurata, muto, tasti della tastiera, finestra e volume separato di Spotify. I test includono il rendering con AddressSanitizer/UndefinedBehaviorSanitizer e una regressione su aggiornamenti ripetuti di volume, muto e limiti 0–100%.
+
+Per eseguire i test del rendering:
+
+```sh
+mkdir -p build
+xcrun clang -O1 -g -fsanitize=address,undefined Render.c RenderTests.c -o build/render-tests
+build/render-tests
+```
+
+Il test `ModelTests.swift` può essere compilato insieme a `Audio.swift`, `Model.swift` e `build/Render.o`, usando `-import-objc-header Render.h` e i framework AppKit, CoreAudio e ApplicationServices. Esegue modifiche in un dominio di preferenze temporaneo; non eseguirlo mentre si sta verificando il file diagnostico dell’app, perché scrive nello stesso percorso di stato.
+
+Non sono state effettuate prove fisiche di sospensione o scollegamento dell’uscita durante questa verifica.
